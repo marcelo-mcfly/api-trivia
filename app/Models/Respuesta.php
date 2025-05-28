@@ -3,10 +3,10 @@
 namespace App\Models;
 
 //use Illuminate\Database\Eloquent\Model;
-use MongoDB\Laravel\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
+use MongoDB\Laravel\Eloquent\Model;
 
-class Pregunta extends Model
+class Respuesta extends Model
 {
     use HasApiTokens;
     //

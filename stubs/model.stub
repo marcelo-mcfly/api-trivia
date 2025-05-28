@@ -5,8 +5,10 @@ namespace {{ namespace }};
 {{ factoryImport }}
 //use Illuminate\Database\Eloquent\Model;
 use MongoDB\Laravel\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class {{ class }} extends Model
 {
+    use HasApiTokens;
     {{ factory }}
 }
