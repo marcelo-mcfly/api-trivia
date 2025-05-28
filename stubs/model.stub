@@ -1,0 +1,12 @@
+<?php
+
+namespace {{ namespace }};
+
+{{ factoryImport }}
+//use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
+
+class {{ class }} extends Model
+{
+    {{ factory }}
+}

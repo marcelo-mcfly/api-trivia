@@ -1,0 +1,13 @@
+services:
+    db:
+        container_name: mongo-db7.0
+        image: mongo:7.0.15
+        command: ["mongod", "--auth"]
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: rootpw
+            MONGO_INITDB_DATABASE: admin
+        volumes:
+            - ~/docker-db/mongo-70/data:/data/db
+        ports:
+        - "27117:27017"
