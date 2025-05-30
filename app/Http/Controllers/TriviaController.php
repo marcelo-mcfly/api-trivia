@@ -14,41 +14,8 @@ use Illuminate\Support\Facades\Log;
 
 class TriviaController extends Controller
 {
-    public function storeV1(Request $request)
-    {
-        $validated = $request->validate([
-            'nombre_trivia' => 'required|string',
-            'numero_trivia' => 'required|integer',
-            'preguntas' => 'required|array',
-            'preguntas.*.enunciado' => 'required|string',
-            'preguntas.*.opciones' => 'required|array|min:2',
-            'preguntas.*.opciones.*.texto_opcion' => 'required|string',
-            'preguntas.*.opcion_correcta_id' => 'required|string',
-        ]);
 
-        // Agregar ID únicos a las opciones
-        $preguntas = collect($validated['preguntas'])->map(function ($pregunta) {
-            $pregunta['opciones'] = collect($pregunta['opciones'])->map(function ($opcion) {
-                $opcion['id'] = uniqid(); // Genera ID único
-                return $opcion;
-            })->toArray();
-
-            return $pregunta;
-        })->toArray();
-
-        $trivia = Trivia::create([
-            'numero_trivia' => $validated['numero_trivia'],
-            'preguntas' => $preguntas,
-        ]);
-
-        return response()->json([
-            'message' => 'Trivia creada con preguntas embebidas',
-            'trivia' => $trivia
-        ]);
-    }
-
-
-    public function store(Request $request)
+    public function crear(Request $request)
     {
         $validacion = \Validator::make($request->all(), [
 
@@ -89,7 +56,7 @@ class TriviaController extends Controller
             return response()->json([
                 'message' => 'Trivia creada',
                 'trivia' => $trivia,
-            ]);
+            ],201);
         } catch (Exception $e) {
             Log::error('Error al crear trivia', ['exception' => $e]);
 
@@ -112,11 +79,11 @@ class TriviaController extends Controller
                 return response()->json([
                     'message' => 'Trivia encontrada',
                     'trivia' => $trivia,
-                ]);
+                ],200);
             } else {
                 return response()->json([
                     'message' => "No se encontró trivia con número $numeroTrivia"
-                ], 404);
+                ], 204);
             }
         } else {
             // Si no se pasa número, retorna todas las trivias
@@ -125,7 +92,7 @@ class TriviaController extends Controller
             return response()->json([
                 'message' => 'Listado de todas las trivias',
                 'trivias' => $trivias,
-            ]);
+            ],200);
         }
     }
 }

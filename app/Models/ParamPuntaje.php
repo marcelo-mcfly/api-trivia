@@ -6,20 +6,16 @@ namespace App\Models;
 use Laravel\Sanctum\HasApiTokens;
 use MongoDB\Laravel\Eloquent\Model;
 
-class Respuesta extends Model
+class ParamPuntaje extends Model
 {
     use HasApiTokens;
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $table = 'respuestas';
+
+    protected $table = 'param_puntajes';
+    protected $connection = 'mongodb';
+
     protected $fillable = [
-        'preguntas',
-        'trivia_id',
-        'puntaje',
-        'jugador'
+        'nivel',
+        'puntaje'
     ];
 
     /**
@@ -37,8 +33,7 @@ class Respuesta extends Model
     protected function casts(): array
     {
         return [
-            'preguntas' => 'array',
-            'puntaje' => 'integer',
+
         ];
     }
 }
