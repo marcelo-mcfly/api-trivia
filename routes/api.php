@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TriviaController;
 use App\Http\Controllers\RespuestasController;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\AuthController;
 
@@ -36,10 +35,3 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-Route::get('/test-json-expect', function (Request $request) {
-    return response()->json([
-        'expects_json' => $request->expectsJson(),
-        'headers' => $request->headers->all(),
-        'message' => 'Verifica el valor de "expects_json". Debería ser true para APIs.'
-    ]);
-});
