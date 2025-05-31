@@ -1,0 +1,508 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Trivias y Preguntas",
+        "description": "Documentación de la API para la aplicación de Trivias y Preguntas.",
+        "contact": {
+            "email": "test@email.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Servidor de Desarrollo"
+        }
+    ],
+    "paths": {
+        "/api/preguntas/crear": {
+            "post": {
+                "tags": [
+                    "Preguntas"
+                ],
+                "summary": "Crear preguntas",
+                "operationId": "505fe301ef8db824c714a4fcb8a2fe56",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "required": [
+                                        "enunciado",
+                                        "opciones",
+                                        "opcion_correcta_id",
+                                        "nivel_dificultad"
+                                    ],
+                                    "properties": {
+                                        "enunciado": {
+                                            "type": "string",
+                                            "example": "¿Qué es una entrevista de trabajo?"
+                                        },
+                                        "opciones": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "example": "1"
+                                                    },
+                                                    "texto_opcion": {
+                                                        "type": "string",
+                                                        "example": "Una reunión social"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "opcion_correcta_id": {
+                                            "type": "string",
+                                            "example": "2"
+                                        },
+                                        "nivel_dificultad": {
+                                            "type": "string",
+                                            "enum": [
+                                                "facil",
+                                                "medio",
+                                                "dificil"
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Preguntas creadas"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/preguntas/listar": {
+            "get": {
+                "tags": [
+                    "Preguntas"
+                ],
+                "summary": "Listar preguntas paginadas",
+                "operationId": "21e2c65794d4e6545e7e66cbde981443",
+                "responses": {
+                    "200": {
+                        "description": "Lista de preguntas"
+                    }
+                }
+            }
+        },
+        "/api/respuestas/crear": {
+            "post": {
+                "tags": [
+                    "Respuestas"
+                ],
+                "summary": "Registrar respuestas de una trivia",
+                "operationId": "9152387a7fe3994fb925b6b5b228d07f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "jugador",
+                                    "trivia_id",
+                                    "preguntas"
+                                ],
+                                "properties": {
+                                    "jugador": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "jugador@email.com"
+                                    },
+                                    "trivia_id": {
+                                        "type": "string",
+                                        "example": "6658b60e9d63c84e8c0f0a11"
+                                    },
+                                    "preguntas": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "pregunta_id",
+                                                "respuesta_jugador"
+                                            ],
+                                            "properties": {
+                                                "pregunta_id": {
+                                                    "type": "string",
+                                                    "example": "664a23c48d5f6a1e9b7f8b4f"
+                                                },
+                                                "respuesta_jugador": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Respuestas guardadas correctamente"
+                    },
+                    "422": {
+                        "description": "Validación fallida"
+                    },
+                    "404": {
+                        "description": "Jugador no registrado"
+                    },
+                    "500": {
+                        "description": "Error interno al guardar la respuesta"
+                    }
+                }
+            }
+        },
+        "/api/respuestas/listar": {
+            "get": {
+                "tags": [
+                    "Respuestas"
+                ],
+                "summary": "Listar respuestas de un jugador (por email y número de trivia opcional)",
+                "operationId": "7b315725e78586f9d587dad430ffbdd3",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Correo electrónico del jugador",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email",
+                            "example": "jugador@email.com"
+                        }
+                    },
+                    {
+                        "name": "numero_trivia",
+                        "in": "query",
+                        "description": "Número de trivia (opcional)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de respuestas del jugador"
+                    },
+                    "422": {
+                        "description": "Datos inválidos o incompletos"
+                    }
+                }
+            }
+        },
+        "/trivias/crear": {
+            "post": {
+                "tags": [
+                    "Trivias"
+                ],
+                "summary": "Crea una nueva trivia",
+                "operationId": "cf3b09dac1e896092267510f4756c4a4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "numero_trivia",
+                                    "nombre_trivia",
+                                    "pregunta_ids"
+                                ],
+                                "properties": {
+                                    "numero_trivia": {
+                                        "description": "Número identificador de la trivia",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nombre_trivia": {
+                                        "description": "Nombre descriptivo de la trivia",
+                                        "type": "string",
+                                        "example": "Trivia de Recursos Humanos"
+                                    },
+                                    "pregunta_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "description": "Lista de IDs de preguntas asociadas a la trivia (MongoDB ObjectId)",
+                                            "type": "string",
+                                            "example": "68387d483208ef498505f092"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Trivia creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Trivia creada con éxito."
+                                        },
+                                        "trivia": {
+                                            "description": "Detalles de la trivia creada",
+                                            "properties": {
+                                                "_id": {
+                                                    "type": "string",
+                                                    "example": "68387d483208ef498505f093"
+                                                },
+                                                "numero_trivia": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nombre_trivia": {
+                                                    "type": "string",
+                                                    "example": "Trivia de Recursos Humanos"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflicto: Trivia ya existe",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ya existe una trivia con este número de trivia."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validación fallida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos."
+                                        },
+                                        "errors": {
+                                            "description": "Detalles de los errores de validación",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error interno del servidor."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trivias/listar": {
+            "get": {
+                "tags": [
+                    "Trivias"
+                ],
+                "summary": "Listar trivias o una trivia por número",
+                "operationId": "bbba0888b97f6421b5432db6dc85029e",
+                "parameters": [
+                    {
+                        "name": "numero_trivia",
+                        "in": "query",
+                        "description": "Número de la trivia a consultar (opcional). Si se omite, lista todas las trivias.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de trivias o trivia específica encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "_id": {
+                                                "description": "ID único de la trivia (MongoDB ObjectId)",
+                                                "type": "string",
+                                                "example": "68387d483208ef498505f093"
+                                            },
+                                            "numero_trivia": {
+                                                "description": "Número de la trivia",
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "nombre_trivia": {
+                                                "description": "Nombre de la trivia",
+                                                "type": "string",
+                                                "example": "Trivia de Recursos Humanos"
+                                            },
+                                            "pregunta_ids": {
+                                                "description": "IDs de preguntas asociadas",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "example": [
+                                                    "68387d483208ef498505f092"
+                                                ]
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "example": [
+                                    {
+                                        "_id": "6838e481574f16179305e352",
+                                        "numero_trivia": 1,
+                                        "nombre_trivia": "Trivia de Historia",
+                                        "pregunta_ids": [
+                                            "6838f481574f16179305e353"
+                                        ]
+                                    },
+                                    {
+                                        "_id": "6838e481574f16179305e354",
+                                        "numero_trivia": 2,
+                                        "nombre_trivia": "Trivia de Ciencias",
+                                        "pregunta_ids": []
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content: No se encontró la trivia específica (si se consultó por número y no existe)."
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error interno del servidor."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Ingresa el token Bearer (ej. 'Bearer your_token_here')",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Preguntas",
+            "description": "Preguntas"
+        },
+        {
+            "name": "Respuestas",
+            "description": "Respuestas"
+        },
+        {
+            "name": "Trivias",
+            "description": "Trivias"
+        }
+    ]
+}

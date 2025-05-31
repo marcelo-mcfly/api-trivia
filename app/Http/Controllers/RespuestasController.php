@@ -12,6 +12,35 @@ use Illuminate\Support\Facades\Log;
 
 class RespuestasController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/respuestas/crear",
+     *     summary="Registrar respuestas de una trivia",
+     *     tags={"Respuestas"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"jugador", "trivia_id", "preguntas"},
+     *             @OA\Property(property="jugador", type="string", format="email", example="jugador@email.com"),
+     *             @OA\Property(property="trivia_id", type="string", example="6658b60e9d63c84e8c0f0a11"),
+     *             @OA\Property(
+     *                 property="preguntas",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     required={"pregunta_id", "respuesta_jugador"},
+     *                     @OA\Property(property="pregunta_id", type="string", example="664a23c48d5f6a1e9b7f8b4f"),
+     *                     @OA\Property(property="respuesta_jugador", type="string", example="1")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Respuestas guardadas correctamente"),
+     *     @OA\Response(response=422, description="Validación fallida"),
+     *     @OA\Response(response=404, description="Jugador no registrado"),
+     *     @OA\Response(response=500, description="Error interno al guardar la respuesta")
+     * )
+     */
+
     public function crear(Request $request)
     {
         // Validar datos básicos
@@ -89,6 +118,31 @@ class RespuestasController extends Controller
         }
     }
 
+
+    /**
+ * @OA\Get(
+ *     path="/api/respuestas/listar",
+ *     summary="Listar respuestas de un jugador (por email y número de trivia opcional)",
+ *     tags={"Respuestas"},
+ *     @OA\Parameter(
+ *         name="email",
+ *         in="query",
+ *         required=true,
+ *         description="Correo electrónico del jugador",
+ *         @OA\Schema(type="string", format="email", example="jugador@email.com")
+ *     ),
+ *     @OA\Parameter(
+ *         name="numero_trivia",
+ *         in="query",
+ *         required=false,
+ *         description="Número de trivia (opcional)",
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Response(response=200, description="Listado de respuestas del jugador"),
+ *     @OA\Response(response=422, description="Datos inválidos o incompletos")
+ * )
+ */
+
     public function listar(Request $request)
     {
         $validated = \Validator::make($request->all(), [
@@ -120,7 +174,7 @@ class RespuestasController extends Controller
             }
 
             $query = Respuesta::where('jugador', $email)
-                             ->whereIn('trivia_id', $trivias);
+                ->whereIn('trivia_id', $trivias);
         } else {
             // Sin filtro por trivia
             $query = Respuesta::where('jugador', $email);
@@ -140,8 +194,8 @@ class RespuestasController extends Controller
         $triviaIds = $respuestas->pluck('trivia_id')->unique()->toArray();
 
         $trivias = Trivia::whereIn('id', $triviaIds)
-                        ->get()
-                        ->keyBy('id'); // clave por id para acceso rápido
+            ->get()
+            ->keyBy('id'); // clave por id para acceso rápido
 
         // Agregamos la info de la trivia en cada respuesta
         $respuestas->transform(function ($respuesta) use ($trivias) {
@@ -160,5 +214,4 @@ class RespuestasController extends Controller
             'respuestas' => $respuestas
         ]);
     }
-
 }
