@@ -8,6 +8,7 @@ Este proyecto es una API REST para gestionar un sistema de trivias, preguntas y 
 
 - Inicio de sesión con email y contraseña
 - Creación y listado de trivias
+- Ranking de usuarios por trivia
 - Registro y consulta de preguntas asociadas
 - Envío y consulta de respuestas
 - Seguridad con autenticación por token (Sanctum)
@@ -131,6 +132,7 @@ Este proyecto es una API REST para gestionar un sistema de trivias, preguntas y 
 |--------|-------------------|-------------------------|
 | POST   | /trivias/crear    | Crear una trivia        |
 | GET    | /trivias/listar   | Listar trivias          |
+| GET    | /trivias/ranking  | Ranking de usuarios por trivia          |
 
 ### ❓ Preguntas
 

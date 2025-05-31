@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('trivias')->group(function () {
         Route::post('/crear', [TriviaController::class, 'crear']);
         Route::get('/listar', [TriviaController::class, 'listar']);
+        Route::get('/ranking', [TriviaController::class, 'ranking']);
     });
 
     Route::prefix('preguntas')->group(function () {

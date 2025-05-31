@@ -594,6 +594,60 @@
                     }
                 ]
             }
+        },
+        "/trivias/ranking": {
+            "get": {
+                "tags": [
+                    "Trivias"
+                ],
+                "summary": "Obtener ranking de usuarios por trivia",
+                "operationId": "41a6f1cd568d4b199392526ce9a29aa2",
+                "parameters": [
+                    {
+                        "name": "numero_trivia",
+                        "in": "query",
+                        "description": "Número de la trivia para generar ranking",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ranking obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "jugador": {
+                                                "type": "string",
+                                                "example": "usuario@email.com"
+                                            },
+                                            "puntaje_total": {
+                                                "type": "integer",
+                                                "example": 30
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trivia no encontrada o sin respuestas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {

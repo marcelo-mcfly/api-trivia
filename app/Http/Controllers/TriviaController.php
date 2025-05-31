@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Trivia;
 use App\Models\Pregunta;
+use App\Models\User;
+use App\Models\Respuesta;
 use Exception;
 use PhpParser\Node\Stmt\TryCatch;
 
@@ -213,4 +215,69 @@ class TriviaController extends Controller
             ], 200);
         }
     }
+
+/**
+ * @OA\Get(
+ *     path="/trivias/ranking",
+ *     summary="Obtener ranking de usuarios por trivia",
+ *     tags={"Trivias"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="numero_trivia",
+ *         in="query",
+ *         description="Número de la trivia para generar ranking",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Ranking obtenido exitosamente",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(
+ *                 @OA\Property(property="jugador", type="string", example="usuario@email.com"),
+ *                 @OA\Property(property="puntaje_total", type="integer", example=30)
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Trivia no encontrada o sin respuestas"
+ *     )
+ * )
+ */
+public function ranking(Request $request)
+{
+    $numeroTrivia = (int)$request->numero_trivia;
+
+    if (!$numeroTrivia) {
+        return response()->json(['message' => 'Debe proporcionar el número de trivia.'], 422);
+    }
+
+    $trivia = Trivia::where('numero_trivia', (int) $numeroTrivia)->first();
+
+    if (!$trivia) {
+        return response()->json(['message' => 'Trivia no encontrada.'], 404);
+    }
+
+    $respuestas = Respuesta::where('trivia_id', (string) $trivia->_id)->get();
+
+    if ($respuestas->isEmpty()) {
+        return response()->json(['message' => 'No hay respuestas para esta trivia.'], 404);
+    }
+
+    // Agrupar por email del jugador y sumar puntajes
+    $ranking = $respuestas->groupBy('jugador')->map(function ($respuestasPorJugador, $email) {
+        return [
+            'jugador' => $email,
+            'puntaje_total' => $respuestasPorJugador->sum('puntaje'),
+        ];
+    })->sortByDesc('puntaje_total')->values();
+
+    return response()->json([
+        'message' => 'Ranking generado correctamente.',
+        'ranking' => $ranking
+    ], 200);
+}
+
 }
